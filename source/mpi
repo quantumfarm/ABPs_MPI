@@ -1,0 +1,22 @@
+
+              #!/bin/sh -f
+              #PBS -N Und
+              #PBS -l nodes=1:ppn=1
+              #PBS -o test.stdout
+              #PBS -e test.stderr
+              #PBS -q low
+              ###PBS -q high
+              ###PBS -q middle
+	      source /public/software/profile.d/mpi_openmpi-2.0.0-gcc-5.4.0.sh
+	      ###echo ============ after source ===============
+	      ###ldd a.out
+              ###nprocs='wc -l < '
+
+              cd /public/home/tingw/code/ABPs_MPI/source
+
+              ###echo " "|./a.out
+              
+              ###echo /public/home/tingw/code/ABPs_MPI/source
+
+              mpirun ./a.out
+              

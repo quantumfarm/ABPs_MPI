@@ -1,0 +1,72 @@
+#!/bin/bash
+
+source ./source/data_base
+
+
+fl0=output
+fl1=phi${phi}N${N}gam${gam}T${T}K${K}Dr${Dr}v${v0}
+fl2=L${L}h${h}
+
+
+
+fl=./${fl0}/${fl1}/${fl2}
+
+cd ${fl}/obs/f
+
+
+
+#=====================================================================
+#average every 1000 lines. stating from the second line.
+U1=$U_base
+for U in ${U_base} 
+do
+
+for nd in ${nd_base} 
+do
+
+file=F_K${K}_T${T}_gam${gam}_phi${phi}_N${N}_L${L}_h${h}_Dr${Dr}_v${v0}_U${U}
+
+
+## error : if (FNR=1)  should be (FNR==1)
+
+
+
+         #avg=int(1.0/h) 
+awk -v U=$U -v h=$h '{ 
+         avg=int(1.0/h/U) 
+         if (FNR==1) {print $0} 
+         if (FNR>1){
+                       a2+=$2; 
+                       a3+=$3; 
+                       a4+=$4; 
+                       if ((FNR-2)% avg==0) {print $1, a2/avg,a3/avg,a4/avg; a2=0; a3=0; a4=0;} 
+                   }  
+     }'  ${file}_p${nd} > ${file}_length${running_length}_ens_p${nd}
+
+
+done #nd
+done #U
+
+
+
+
+U2=$U 
+#ensemble average
+
+for U in ${U_base} 
+do
+file=F_K${K}_T${T}_gam${gam}_phi${phi}_N${N}_L${L}_h${h}_Dr${Dr}_v${v0}_U${U}
+
+awk '{ if (FNR>1) {a1[FNR]=$1;a2[FNR]+=$2;a3[FNR]+=$3;a4[FNR]+=$4;sum[FNR]++;} } END {for (i=2;i<=FNR;i++) print a1[i],a2[i]/sum[i],a3[i]/sum[i],a4[i]/sum[i]}' ${file}_length${running_length}_ens_p* > ${file}_ens_avg
+done #U
+
+
+
+#-------------------------------------------------
+gnuplot  -persist  << EOF
+
+plot  "${file}_p1"  using 1:2  w l 
+replot  "${file}_p1_avg"  using 1:2  w l lw 5
+
+EOF
+# -------------------------------------------

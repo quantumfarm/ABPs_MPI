@@ -1,0 +1,51 @@
+
+#include <iostream>
+
+#include <cmath>
+
+#include <stdlib.h>
+
+#include <vector>
+
+
+
+
+using namespace std;
+
+
+
+
+
+
+int main (){
+
+    const int Nx=10;
+    const int Ny=10;
+    int Nz=10*2;
+    double x[Nx][Ny];
+    double y[Nz];
+}   
+
+
+class Stat{
+
+
+        double x_min;
+        double x_max;
+
+        double dx;
+
+        const int Nx=3 ;
+
+    public:
+
+        Stat (){
+            x_min=0;
+            x_max=10;
+          //  Nx =ceil ( (x_max-x_min) /dx );
+        }
+           
+        //int Box[10];        
+
+
+};

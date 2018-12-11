@@ -1,0 +1,120 @@
+#!/bin/bash
+
+### confirm submission
+echo "Confirm you will submit jobs?" 
+read stopflage
+if [[ ${stopflage} == 0 ]]; then echo "You select yes!"
+else exit 0
+fi
+
+
+
+pwd_current=$PWD
+pwd_source=$PWD/source
+
+#using source datebase
+source ./source/data_base
+
+
+#create folders 
+fl0=output
+fl1=phi${phi}N${N}gam${gam}T${T}K${K}Dr${Dr}v${v0}
+fl2=L${L}h${h}
+
+fl=./${fl0}/${fl1}/${fl2}
+mkdir -p ${fl}
+cd ${fl}
+
+
+
+mkdir -p ./obs/f
+mkdir -p ./obs/xv
+
+mkdir -p ./source
+
+cd ./source   
+
+
+
+echo $PWD
+echo ${pwd_source}
+
+cp ${pwd_source}/* ./
+
+
+
+sed -i "s/#define phi.*/#define phi $phi/" para.h
+sed -i "s/#define N .*/#define N $N/" para.h
+
+sed -i "s/#define gam .*/#define gam $gam/" para.h
+sed -i "s/#define T .*/#define T $T/" para.h
+sed -i "s/#define K .*/#define K $K/" para.h
+sed -i "s/#define Dr .*/#define Dr $Dr/" para.h
+sed -i "s/#define Lx .*/#define Lx $L/" para.h
+
+sed -i "s/#define v0 .*/#define v0 $v0/" para.h
+
+sed -i "s/#define Ly .*/#define Ly $L/" para.h
+sed -i "s/#define h .*/#define h $h/" para.h
+sed -i "s/#define BB .*/#define BB $BB/" para.h
+
+
+#sed -i "s/#define running_time .*/define running_time $running_time/" para.h
+
+awk -v running_length=$running_length '/#define running_length/ {$3=running_length}1 '   para.h > tmp; mv tmp para.h
+
+
+    source /public/software/profile.d/mpi_openmpi-2.0.0-gcc-5.4.0.sh
+    mpic++ -O3 -std=c++11 ABPs.cc ic.cc dyn.cc box.cc interaction.cc field.cc obs.cc
+
+        echo "
+              #!/bin/sh -f
+              #PBS -N U${U_base}nd${nd}
+              #PBS -l nodes=10:ppn=24
+              #PBS -o test.stdout
+              #PBS -e test.stderr
+              #PBS -q low
+              ###PBS -q high
+              ###PBS -q middle
+	      source /public/software/profile.d/mpi_openmpi-2.0.0-gcc-5.4.0.sh
+	      ###echo ============ after source ===============
+	      ###ldd a.out
+              ###nprocs='wc -l < $PBS_NODEFILE'
+
+              cd $PWD
+
+              ###echo \"${U} ${nd}\"|./a.out
+              
+              ###echo $PWD
+
+              mpirun ./a.out
+              "> mpi 
+    qsub mpi   # submit the job
+
+cd $pwd_current
+echo $pwd_current
+
+
+
+
+### record the parameters
+now=$(date +"%c")
+echo "$now" >>log
+
+
+
+
+echo "N=$N">>log
+echo "phi=$phi">>log
+echo "gam=$gam">>log
+echo "T=$T">>log
+echo "K=$K">>log
+echo "v0=$v0">>log
+echo "Dr=$Dr">>log
+echo "L=$L">>log
+echo "h=$h">>log
+echo "nd=$nd_base">>log
+echo "U=$U_base">>log
+echo "running_length=$running_length">>log
+echo "---------------------------------------------------" >> log
+echo "" >> log

@@ -1,0 +1,4 @@
+#ignore tracing files/folders
+output/
+test.*
+

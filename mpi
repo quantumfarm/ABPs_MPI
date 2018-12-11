@@ -1,0 +1,15 @@
+
+              #!/bin/sh -f
+              #PBS -N job_name
+              #PBS -l nodes=1:ppn=1
+              #PBS -o test.stdout
+              #PBS -e test.stderr
+              #PBS -q low
+              ###PBS -q high
+              ###PBS -q middle
+	      source /public/software/profile.d/mpi_openmpi-2.0.0-gcc-5.4.0.sh
+
+              cd /public/home/tingw/code/ABPs_MPI
+
+              mpirun ./a.out
+              

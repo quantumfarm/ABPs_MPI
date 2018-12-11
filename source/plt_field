@@ -1,0 +1,16 @@
+set terminal postscript eps enhanced color colortext sol 
+
+### 
+set output 'gr_0s_avg1000.eps'
+
+set size ratio 1/1
+
+plot 'gr_0s_avg1000.txt' w image ti '' 
+
+!evince gr_5s_avg1000.eps
+
+
+
+
+
+#! evince flux.eps

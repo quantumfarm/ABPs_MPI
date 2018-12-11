@@ -1,0 +1,35 @@
+#!/bin/bash
+
+### confirm submission
+echo "Confirm you will submit jobs?" 
+read stopflage
+if [[ ${stopflage} == 0 ]]; then echo "You select yes!"
+else exit 0
+fi
+
+
+
+pwd_current=$PWD
+pwd_source=$PWD/code
+
+
+    source /public/software/profile.d/mpi_openmpi-2.0.0-gcc-5.4.0.sh
+    mpic++ -O3 -std=c++11 main.cc
+
+        echo "
+              #!/bin/sh -f
+              #PBS -N job_name
+              #PBS -l nodes=1:ppn=1
+              #PBS -o test.stdout
+              #PBS -e test.stderr
+              #PBS -q low
+              ###PBS -q high
+              ###PBS -q middle
+	      source /public/software/profile.d/mpi_openmpi-2.0.0-gcc-5.4.0.sh
+
+              cd $PWD
+
+              mpirun ./a.out
+              "> mpi 
+    qsub mpi   # submit the job
+
